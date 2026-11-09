@@ -1,0 +1,154 @@
+{
+  "apiVersion": 1,
+  "id": "notebooklm",
+  "name": "NotebookLM",
+  "version": "0.1.0",
+  "permissions": [
+    "books.read",
+    "network",
+    "ui"
+  ],
+  "origins": [
+    "https://notebook.google.com",
+    "https://notebooklm.google.com",
+    "https://lh3.googleusercontent.com"
+  ],
+  "authUrl": "https://notebook.google.com/",
+  "tools": [
+    {
+      "name": "notebooks",
+      "description": "List the user's Google NotebookLM notebooks. Requires sign-in in Extensions settings. Read-only.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    },
+    {
+      "name": "upload",
+      "description": "Upload original text from an Anx book to NotebookLM, only when the user asks. scope=chapter uploads the currently open chapter/page; scope=book uploads the complete EPUB, including spoilers. bookId selects a library EPUB. PDF supports only the currently open page/chapter, not full-book upload yet. Creates a notebook unless notebookId is supplied. Returned sources may still be processing.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "operationId": {
+            "type": "string",
+            "description": "Stable unique operation ID. Reuse on retry; never change it to bypass an uncertain previous attempt."
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "chapter",
+              "book"
+            ]
+          },
+          "bookId": {
+            "type": "integer"
+          },
+          "notebookId": {
+            "type": "string",
+            "description": "Notebook ID returned by notebooks or upload. Never invent it."
+          },
+          "title": {
+            "type": "string",
+            "description": "Optional new notebook title"
+          }
+        },
+        "required": [
+          "operationId"
+        ]
+      }
+    },
+    {
+      "name": "ask",
+      "description": "Ask Google NotebookLM a question grounded in a chosen notebook. Returns final answer and source IDs for citation numbers. Each question is independent; include needed follow-up context.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "notebookId": {
+            "type": "string",
+            "description": "Notebook ID returned by notebooks or upload. Never invent it."
+          },
+          "question": {
+            "type": "string",
+            "description": "Question, including any needed context"
+          }
+        },
+        "required": [
+          "notebookId",
+          "question"
+        ]
+      }
+    },
+    {
+      "name": "audio",
+      "description": "Generate a NotebookLM audio overview ONLY on explicit user request. Uses the user's Google generation quota. Returns a job/artifact ID; poll status later. Never automatically retry an uncertain creation.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "operationId": {
+            "type": "string",
+            "description": "Stable unique operation ID. Reuse on retry; never change it to bypass an uncertain previous attempt."
+          },
+          "notebookId": {
+            "type": "string",
+            "description": "Notebook ID returned by notebooks or upload. Never invent it."
+          },
+          "language": {
+            "type": "string",
+            "description": "Language code, default es"
+          },
+          "focus": {
+            "type": "string",
+            "description": "What the audio should explain"
+          }
+        },
+        "required": [
+          "notebookId",
+          "operationId"
+        ]
+      }
+    },
+    {
+      "name": "status",
+      "description": "Check existing NotebookLM Studio artifacts and audio readiness. Read-only; use before retrying any uncertain generation.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "notebookId": {
+            "type": "string",
+            "description": "Notebook ID returned by notebooks or upload. Never invent it."
+          }
+        },
+        "required": [
+          "notebookId"
+        ]
+      }
+    },
+    {
+      "name": "download",
+      "description": "Download an existing completed audio overview to the phone. Obtain artifactId from status. Does not generate new audio.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "notebookId": {
+            "type": "string",
+            "description": "Notebook ID returned by notebooks or upload. Never invent it."
+          },
+          "artifactId": {
+            "type": "string",
+            "description": "Existing audio artifact ID"
+          }
+        },
+        "required": [
+          "notebookId",
+          "artifactId"
+        ]
+      }
+    }
+  ],
+  "authOrigins": [
+    "https://accounts.google.com",
+    "https://myaccount.google.com",
+    "https://accounts.youtube.com"
+  ]
+}
